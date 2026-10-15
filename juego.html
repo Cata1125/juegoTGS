@@ -1,0 +1,1351 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1220">
+<title>Torneo TGS | Sistema vs. Entorno</title>
+
+<style>
+:root {
+    --bg: #0b1220;
+    --panel: #141f32;
+    --panel2: #1a2940;
+    --border: #2d405b;
+    --text: #f1f5fb;
+    --muted: #a4b2c8;
+    --blue: #53baff;
+    --orange: #ffb45c;
+    --green: #53dda0;
+    --red: #ff7185;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 25px 15px;
+    background:
+        radial-gradient(ellipse at top left, #17304c 0, transparent 45%),
+        radial-gradient(ellipse at bottom right, #302039 0, transparent 40%),
+        var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button {
+    font: inherit;
+}
+
+button:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+}
+
+.app {
+    width: min(1000px, 100%);
+    margin: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #17304c;
+    color: var(--blue);
+    border: 1px solid #355675;
+    font-size: 27px;
+    font-weight: 900;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: clamp(22px, 4vw, 30px);
+    margin: 5px 0;
+}
+
+.subtitle, .muted {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    background: var(--panel);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+}
+
+.grid-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 14px;
+}
+
+.card {
+    min-width: 0;
+    background: linear-gradient(145deg, var(--panel2), var(--panel));
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 20px;
+}
+
+.entropy-card {
+    grid-column: 1 / -1;
+}
+
+.stats-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 800;
+}
+
+.big {
+    font-size: 43px;
+    font-weight: 850;
+    letter-spacing: -2px;
+    margin: 8px 0;
+}
+
+.big small {
+    color: var(--muted);
+    font-size: 19px;
+}
+
+.pill {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #28604b;
+    color: var(--green);
+    background: #123328;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.pill.warning {
+    color: var(--orange);
+    background: #392819;
+    border-color: #77512d;
+}
+
+.pill.danger {
+    color: var(--red);
+    background: #3b1b29;
+    border-color: #753344;
+}
+
+.progress {
+    height: 8px;
+    background: #29364c;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 14px;
+}
+
+.progress > div {
+    height: 100%;
+    width: 30%;
+    transition: width .3s ease;
+    background: var(--green);
+}
+
+.round-num {
+    font-size: 28px;
+    font-weight: 850;
+    margin: 12px 0;
+}
+
+.players {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.player {
+    min-width: 0;
+    border-top: 3px solid var(--blue);
+    transition: opacity .2s, box-shadow .2s;
+}
+
+.player.environment {
+    border-top-color: var(--orange);
+}
+
+.player.active {
+    box-shadow: 0 0 25px #0004;
+}
+
+.player.inactive {
+    opacity: .62;
+}
+
+.player-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-title {
+    font-size: 19px;
+    font-weight: 850;
+    margin: 7px 0;
+}
+
+.system .player-title {
+    color: var(--blue);
+}
+
+.environment .player-title {
+    color: var(--orange);
+}
+
+.turn-tag {
+    background: #26354a;
+    color: var(--muted);
+    padding: 7px 9px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.resource {
+    margin: 18px 0;
+    padding: 15px;
+    background: #0b1423;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.resource strong {
+    display: block;
+    font-size: 30px;
+    margin-top: 6px;
+}
+
+.system .resource strong {
+    color: var(--blue);
+}
+
+.environment .resource strong {
+    color: var(--orange);
+}
+
+.actions {
+    display: grid;
+    gap: 10px;
+}
+
+.action {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    padding: 13px;
+    text-align: left;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    color: var(--text);
+    background: #1b2940;
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+}
+
+.action:hover:not(:disabled) {
+    background: #293b55;
+    transform: translateY(-1px);
+}
+
+.action:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.action-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    background: #29415b;
+    border-radius: 9px;
+    font-size: 19px;
+}
+
+.environment .action-icon {
+    background: #4a3522;
+}
+
+.action-copy {
+    flex: 1;
+}
+
+.action-copy strong {
+    display: block;
+    font-size: 12px;
+}
+
+.action-copy small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+    margin-top: 4px;
+}
+
+.cost {
+    color: var(--muted);
+    white-space: nowrap;
+    font-size: 10px;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.section h2 {
+    font-size: 15px;
+    margin: 0 0 12px;
+}
+
+.feedback {
+    background: linear-gradient(120deg, #162840, #111a2b);
+    border: 1px solid #344b69;
+    border-radius: 15px;
+    padding: 19px;
+}
+
+.feedback-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.feedback-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #293f59;
+    font-size: 20px;
+}
+
+.feedback h3 {
+    margin: 3px 0 7px;
+    font-size: 15px;
+}
+
+.feedback p {
+    color: #b5c4d9;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.event-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.event {
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 11px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.event strong {
+    display: block;
+}
+
+.event span {
+    color: var(--muted);
+}
+
+.history summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 14px 0;
+}
+
+.history-list {
+    display: grid;
+    gap: 8px;
+    max-height: 230px;
+    overflow-y: auto;
+}
+
+.history-entry {
+    padding: 10px;
+    background: var(--panel);
+    border-left: 2px solid #45617e;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.history-entry strong {
+    color: var(--text);
+}
+
+.primary, .secondary {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid transparent;
+    margin-top: 15px;
+}
+
+.primary {
+    color: #061320;
+    background: var(--blue);
+}
+
+.primary:hover {
+    background: #83d0ff;
+}
+
+.secondary {
+    color: var(--text);
+    background: #1a2940;
+    border-color: var(--border);
+}
+
+.footer {
+    text-align: center;
+    color: #7487a2;
+    font-size: 11px;
+    padding: 25px 0 5px;
+}
+
+/* Retroalimentación final */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: #050a14df;
+    backdrop-filter: blur(9px);
+}
+
+.modal.visible {
+    display: flex;
+    animation: fade .25s ease;
+}
+
+.modal-content {
+    width: min(680px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 27px;
+    background: linear-gradient(145deg, #192942, #0d1627);
+    border: 1px solid #3b506e;
+    border-radius: 20px;
+    box-shadow: 0 25px 100px #0009;
+}
+
+.modal h2 {
+    font-size: clamp(25px, 5vw, 34px);
+    margin: 9px 0;
+}
+
+.modal p {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #becce0;
+}
+
+.final-icon {
+    font-size: 42px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin-top: 15px;
+}
+
+.summary-stat {
+    padding: 13px;
+    border: 1px solid var(--border);
+    background: #0b1423;
+    border-radius: 10px;
+}
+
+.summary-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.summary-stat strong {
+    display: block;
+    font-size: 17px;
+    margin-top: 7px;
+}
+
+.lesson {
+    margin-top: 13px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    background: #101c2e;
+    border-radius: 12px;
+}
+
+.lesson h3 {
+    color: var(--blue);
+    font-size: 13px;
+    margin: 0 0 8px;
+}
+
+.lesson p {
+    margin: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 680px) {
+    body {
+        padding: 16px 11px;
+    }
+
+    .grid-top, .players {
+        grid-template-columns: 1fr;
+    }
+
+    .entropy-card {
+        grid-column: auto;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        padding: 21px 17px;
+    }
+
+    .cost {
+        white-space: normal;
+        text-align: right;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<header>
+    <div class="brand">
+        <div class="logo">Σ</div>
+        <div>
+            <div class="eyebrow">Laboratorio de sistemas</div>
+            <h1>Sistema <span style="color:var(--muted)">vs.</span> Entorno</h1>
+            <div class="subtitle">Torneo TGS · Estrategia, equilibrio y adaptación</div>
+        </div>
+    </div>
+
+    <div class="status">
+        <span class="dot" id="status-dot"></span>
+        <span id="status-text">PARTIDA EN CURSO</span>
+    </div>
+</header>
+
+<section class="grid-top">
+    <article class="card entropy-card">
+        <div class="stats-line">
+            <div>
+                <div class="label">Entropía del sistema</div>
+                <div class="big"><span id="entropy">30</span><small>%</small></div>
+                <div class="muted" id="entropy-description">
+                    El sistema mantiene su estabilidad.
+                </div>
+            </div>
+            <div class="pill" id="entropy-badge">ESTABLE</div>
+        </div>
+
+        <div class="progress">
+            <div id="entropy-bar"></div>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="label">Ronda actual</div>
+        <div class="round-num">
+            <span id="round">1</span><span class="muted"> / 10</span>
+        </div>
+        <div class="progress">
+            <div id="round-bar" style="width:10%;background:var(--blue)"></div>
+        </div>
+        <p class="muted" id="turn-description">Turno del Sistema.</p>
+    </article>
+
+    <article class="card">
+        <div class="label">Diagnóstico del sistema</div>
+        <div class="round-num" style="font-size:22px" id="game-state">En equilibrio</div>
+        <div class="muted" id="game-description">
+            Administra recursos y anticipa las acciones del rival.
+        </div>
+    </article>
+</section>
+
+<section class="players">
+    <article class="card player system active" id="system-panel">
+        <div class="player-head">
+            <div>
+                <div class="eyebrow">Jugador 01</div>
+                <div class="player-title">El Sistema</div>
+            </div>
+            <span class="turn-tag" id="system-tag">TU TURNO</span>
+        </div>
+
+        <p class="muted">
+            Importa información y contrarresta el desorden mediante la neguentropía.
+        </p>
+
+        <div class="resource">
+            <div class="label">Información disponible</div>
+            <strong><span id="bits">2</span> <small style="font-size:12px">BITS</small></strong>
+        </div>
+
+        <div class="actions">
+            <button class="action" id="collect-btn">
+                <span class="action-icon">＋</span>
+                <span class="action-copy">
+                    <strong>Importar información</strong>
+                    <small>Incorpora nuevos datos al sistema.</small>
+                </span>
+                <span class="cost">+3 Bits</span>
+            </button>
+
+            <button class="action" id="repair-btn">
+                <span class="action-icon">↘</span>
+                <span class="action-copy">
+                    <strong>Aplicar neguentropía</strong>
+                    <small>Reduce 25 puntos de entropía. Requiere entropía ≥ 25 %.</small>
+                </span>
+                <span class="cost">−4 Bits</span>
+            </button>
+        </div>
+    </article>
+
+    <article class="card player environment inactive" id="environment-panel">
+        <div class="player-head">
+            <div>
+                <div class="eyebrow" style="color:var(--orange)">Jugador 02</div>
+                <div class="player-title">El Entorno</div>
+            </div>
+            <span class="turn-tag" id="environment-tag">ESPERANDO</span>
+        </div>
+
+        <p class="muted">
+            Acumula energía de caos o ejecuta ataques para aumentar la entropía.
+        </p>
+
+        <div class="resource">
+            <div class="label">Energía de caos</div>
+            <strong><span id="chaos">2</span> <small style="font-size:12px">UNIDADES</small></strong>
+        </div>
+
+        <div class="actions">
+            <button class="action" id="accumulate-btn">
+                <span class="action-icon">＋</span>
+                <span class="action-copy">
+                    <strong>Acumular caos</strong>
+                    <small>Prepara recursos para futuros ataques.</small>
+                </span>
+                <span class="cost">+3 Caos</span>
+            </button>
+
+            <button class="action" id="attack-btn">
+                <span class="action-icon">ϟ</span>
+                <span class="action-copy">
+                    <strong>Ataque entrópico</strong>
+                    <small>Incrementa el desorden del sistema.</small>
+                </span>
+                <span class="cost">−4 Caos</span>
+            </button>
+        </div>
+    </article>
+</section>
+
+<section class="section">
+    <h2>Estado de la partida</h2>
+
+    <div class="feedback" aria-live="polite">
+        <div class="feedback-head">
+            <div class="feedback-icon" id="feedback-icon">◉</div>
+            <div>
+                <h3 id="feedback-title">La simulación ha comenzado</h3>
+                <p id="feedback-text">
+                    El Sistema comienza con 2 Bits y una entropía del 30 %. Selecciona una acción.
+                </p>
+            </div>
+        </div>
+
+        <div class="event-list" id="event-list"></div>
+    </div>
+</section>
+
+<details class="history section">
+    <summary>Consultar historial de acontecimientos</summary>
+    <div class="history-list" id="history-list"></div>
+</details>
+
+<button class="secondary" id="reset-btn">↻ Reiniciar partida</button>
+
+<footer class="footer">
+    TORNEO TGS · Simulación educativa de la Teoría General de Sistemas
+</footer>
+</main>
+
+<!-- ÚNICA VENTANA DE RETROALIMENTACIÓN EDUCATIVA -->
+<section class="modal" id="final-modal"
+         role="dialog" aria-modal="true"
+         aria-labelledby="final-title">
+
+    <div class="modal-content">
+        <div class="final-icon" id="final-icon">🏆</div>
+
+        <div class="eyebrow">Informe de cierre · Torneo TGS</div>
+        <h2 id="final-title">Resultado de la partida</h2>
+        <p id="final-intro"></p>
+
+        <div class="summary-grid">
+            <div class="summary-stat">
+                <span>Entropía final</span>
+                <strong id="final-entropy">30 %</strong>
+            </div>
+            <div class="summary-stat">
+                <span>Bits restantes</span>
+                <strong id="final-bits">2</strong>
+            </div>
+            <div class="summary-stat">
+                <span>Caos restante</span>
+                <strong id="final-chaos">2</strong>
+            </div>
+        </div>
+
+        <div class="lesson">
+            <h3>1. ¿Por qué se obtuvo este resultado?</h3>
+            <p id="final-cause"></p>
+        </div>
+
+        <div class="lesson">
+            <h3>2. Análisis de la estrategia</h3>
+            <p id="final-analysis"></p>
+        </div>
+
+        <div class="lesson">
+            <h3>3. ¿Qué aprendimos de la TGS?</h3>
+            <p id="final-learning"></p>
+        </div>
+
+        <div class="modal-actions">
+            <button class="primary" id="play-again-btn">↻ Jugar de nuevo</button>
+            <button class="secondary" id="close-modal-btn">Cerrar retroalimentación</button>
+        </div>
+    </div>
+</section>
+
+<script>
+"use strict";
+
+/* =====================================================
+   1. CONFIGURACIÓN
+   ===================================================== */
+
+const CONFIG = Object.freeze({
+    ENTROPIA_INICIAL: 30,
+    BITS_INICIALES: 2,
+    CAOS_INICIAL: 2,
+    MAX_RONDAS: 10,
+    DESGASTE: 5,
+    REDUCCION_NEGUENTROPIA: 25,
+    COSTO_NEGUENTROPIA: 4,
+    COSTO_ATAQUE: 4,
+    GANANCIA_RECURSOS: 3,
+    UMBRAL_NEGUENTROPIA: 25,
+    UMBRAL_CRITICO: 75,
+    ENTROPIA_MAXIMA: 100
+});
+
+const estado = {
+    entropia: CONFIG.ENTROPIA_INICIAL,
+    bits: CONFIG.BITS_INICIALES,
+    caos: CONFIG.CAOS_INICIAL,
+    ronda: 1,
+    turno: "SISTEMA",
+    fase: "JUGANDO",
+    eventos: [],
+    historial: [],
+    ganador: null
+};
+
+const $ = id => document.getElementById(id);
+
+const limitar = (valor, minimo, maximo) =>
+    Math.max(minimo, Math.min(maximo, valor));
+
+/* =====================================================
+   2. MENSAJES E HISTORIAL
+   No contienen evaluación educativa por ronda.
+   ===================================================== */
+
+function registrarEvento(titulo, detalle, icono = "•") {
+    const evento = {
+        ronda: estado.ronda,
+        titulo,
+        detalle,
+        icono
+    };
+
+    estado.eventos.push(evento);
+    estado.historial.unshift(evento);
+
+    renderizarHistorial();
+}
+
+function renderizarEventos() {
+    const contenedor = $("event-list");
+    contenedor.replaceChildren();
+
+    for (const evento of estado.eventos) {
+        const fila = document.createElement("div");
+        fila.className = "event";
+
+        const icono = document.createElement("div");
+        icono.textContent = evento.icono;
+
+        const contenido = document.createElement("div");
+        const titulo = document.createElement("strong");
+        titulo.textContent = evento.titulo;
+
+        const detalle = document.createElement("span");
+        detalle.textContent = evento.detalle;
+
+        contenido.append(titulo, detalle);
+        fila.append(icono, contenido);
+        contenedor.append(fila);
+    }
+}
+
+function renderizarHistorial() {
+    const contenedor = $("history-list");
+    contenedor.replaceChildren();
+
+    for (const evento of estado.historial) {
+        const fila = document.createElement("div");
+        fila.className = "history-entry";
+
+        const titulo = document.createElement("strong");
+        titulo.textContent =
+            `Ronda ${evento.ronda} · ${evento.titulo}`;
+
+        const detalle = document.createElement("div");
+        detalle.textContent = evento.detalle;
+
+        fila.append(titulo, detalle);
+        contenedor.append(fila);
+    }
+}
+
+function mostrarMensaje(titulo, mensaje, icono = "◉") {
+    $("feedback-title").textContent = titulo;
+    $("feedback-text").textContent = mensaje;
+    $("feedback-icon").textContent = icono;
+
+    renderizarEventos();
+}
+
+/* =====================================================
+   3. ACTUALIZACIÓN DE INTERFAZ
+   ===================================================== */
+
+function actualizarInterfaz() {
+    const e = estado;
+    const turnoSistema = e.turno === "SISTEMA";
+    const partidaActiva = e.fase === "JUGANDO";
+
+    $("entropy").textContent = e.entropia;
+    $("bits").textContent = e.bits;
+    $("chaos").textContent = e.caos;
+    $("round").textContent = Math.min(e.ronda, CONFIG.MAX_RONDAS);
+
+    $("entropy-bar").style.width = `${e.entropia}%`;
+    $("round-bar").style.width =
+        `${Math.min(100, e.ronda / CONFIG.MAX_RONDAS * 100)}%`;
+
+    $("entropy-bar").style.background =
+        e.entropia >= CONFIG.UMBRAL_CRITICO ? "var(--red)" :
+        e.entropia >= 50 ? "var(--orange)" : "var(--green)";
+
+    const badge = $("entropy-badge");
+    badge.className = "pill";
+
+    if (e.entropia >= CONFIG.ENTROPIA_MAXIMA) {
+        badge.textContent = "COLAPSO";
+        badge.classList.add("danger");
+    } else if (e.entropia >= CONFIG.UMBRAL_CRITICO) {
+        badge.textContent = "CRÍTICO";
+        badge.classList.add("danger");
+    } else if (e.entropia >= 50) {
+        badge.textContent = "PRECAUCIÓN";
+        badge.classList.add("warning");
+    } else {
+        badge.textContent = "ESTABLE";
+    }
+
+    $("entropy-description").textContent =
+        e.entropia >= CONFIG.UMBRAL_CRITICO
+            ? "La entropía es elevada. El sistema se aproxima al colapso."
+            : e.entropia >= 50
+                ? "El desorden aumenta. Evalúa tus próximas acciones."
+                : "El sistema permanece por debajo del umbral crítico.";
+
+    $("game-state").textContent =
+        !partidaActiva ? "Partida finalizada" :
+        e.entropia >= CONFIG.UMBRAL_CRITICO ? "Riesgo elevado" :
+        e.entropia >= 50 ? "En observación" : "En equilibrio";
+
+    $("game-description").textContent = !partidaActiva
+        ? `Ganador: ${e.ganador === "SISTEMA" ? "El Sistema" : "El Entorno"}.`
+        : "Administra recursos y anticipa las acciones del rival.";
+
+    $("system-panel").classList.toggle(
+        "active", turnoSistema && partidaActiva
+    );
+    $("system-panel").classList.toggle(
+        "inactive", !turnoSistema || !partidaActiva
+    );
+    $("environment-panel").classList.toggle(
+        "active", !turnoSistema && partidaActiva
+    );
+    $("environment-panel").classList.toggle(
+        "inactive", turnoSistema || !partidaActiva
+    );
+
+    $("system-tag").textContent = !partidaActiva
+        ? "FINALIZADO" : turnoSistema ? "TU TURNO" : "ESPERANDO";
+
+    $("environment-tag").textContent = !partidaActiva
+        ? "FINALIZADO" : !turnoSistema ? "TU TURNO" : "ESPERANDO";
+
+    $("turn-description").textContent = !partidaActiva
+        ? "La partida ha concluido."
+        : `Turno del ${turnoSistema ? "Sistema" : "Entorno"}.`;
+
+    $("collect-btn").disabled = !partidaActiva || !turnoSistema;
+    $("repair-btn").disabled = !partidaActiva || !turnoSistema;
+    $("accumulate-btn").disabled = !partidaActiva || turnoSistema;
+    $("attack-btn").disabled = !partidaActiva || turnoSistema;
+
+    $("status-text").textContent = partidaActiva
+        ? "PARTIDA EN CURSO"
+        : "PARTIDA FINALIZADA";
+
+    $("status-dot").style.background = partidaActiva
+        ? "var(--green)" : "var(--red)";
+}
+
+/* =====================================================
+   4. ALTERNANCIA DE TURNOS
+   ===================================================== */
+
+function cambiarTurno() {
+    if (estado.fase !== "JUGANDO") return;
+
+    estado.turno =
+        estado.turno === "SISTEMA" ? "ENTORNO" : "SISTEMA";
+
+    actualizarInterfaz();
+}
+
+/* =====================================================
+   5. ACCIONES DEL SISTEMA
+   ===================================================== */
+
+function accionSistema(tipo) {
+    if (estado.fase !== "JUGANDO" || estado.turno !== "SISTEMA") {
+        return;
+    }
+
+    let mensaje;
+    let icono = "✓";
+
+    if (tipo === "recolectar") {
+        estado.bits += CONFIG.GANANCIA_RECURSOS;
+
+        mensaje = `El Sistema importó información y obtuvo ${CONFIG.GANANCIA_RECURSOS} Bits.`;
+        registrarEvento("Información importada", mensaje, "+");
+
+    } else if (tipo === "reparar") {
+        if (estado.entropia < CONFIG.UMBRAL_NEGUENTROPIA) {
+            mensaje =
+                `No se puede aplicar neguentropía: la entropía debe ser de al menos ${CONFIG.UMBRAL_NEGUENTROPIA} %. No se consumieron recursos.`;
+            icono = "!";
+
+            registrarEvento("Acción no disponible", mensaje, "!");
+        } else if (estado.bits < CONFIG.COSTO_NEGUENTROPIA) {
+            mensaje =
+                `Faltan Bits. Se necesitan ${CONFIG.COSTO_NEGUENTROPIA} y tienes ${estado.bits}. No se consumieron recursos.`;
+            icono = "!";
+
+            registrarEvento("Recursos insuficientes", mensaje, "!");
+        } else {
+            const antes = estado.entropia;
+
+            estado.bits -= CONFIG.COSTO_NEGUENTROPIA;
+            estado.entropia = limitar(
+                estado.entropia - CONFIG.REDUCCION_NEGUENTROPIA,
+                0, CONFIG.ENTROPIA_MAXIMA
+            );
+
+            mensaje =
+                `Neguentropía aplicada: la entropía pasó de ${antes} % a ${estado.entropia} %.`;
+            registrarEvento("Neguentropía aplicada", mensaje, "↘");
+        }
+    } else {
+        return;
+    }
+
+    /* Desgaste natural después de la acción del Sistema. */
+    const antesDesgaste = estado.entropia;
+
+    estado.entropia = limitar(
+        estado.entropia + CONFIG.DESGASTE,
+        0, CONFIG.ENTROPIA_MAXIMA
+    );
+
+    registrarEvento(
+        "Desgaste natural",
+        `La entropía pasó de ${antesDesgaste} % a ${estado.entropia} % (+${CONFIG.DESGASTE} puntos).`,
+        "△"
+    );
+
+    if (estado.entropia >= CONFIG.ENTROPIA_MAXIMA) {
+        mostrarMensaje(
+            "Fin de la partida",
+            "La entropía alcanzó el 100 %. Se está preparando el resultado final.",
+            "⚠"
+        );
+
+        actualizarInterfaz();
+        finalizarPartida(
+            "ENTORNO",
+            "La entropía alcanzó el 100 % durante el turno del Sistema, debido al desgaste natural."
+        );
+        return;
+    }
+
+    cambiarTurno();
+
+    mostrarMensaje(
+        estado.turno === "ENTORNO" ? "Turno del Entorno" : "Turno del Sistema",
+        `${mensaje} El desgaste natural fue de +${CONFIG.DESGASTE} puntos. Ahora juega el Entorno.`,
+        icono
+    );
+}
+
+/* =====================================================
+   6. ACCIONES DEL ENTORNO
+   ===================================================== */
+
+function accionEntorno(tipo) {
+    if (estado.fase !== "JUGANDO" || estado.turno !== "ENTORNO") {
+        return;
+    }
+
+    let mensaje;
+    let icono = "✓";
+
+    if (tipo === "acumular") {
+        estado.caos += CONFIG.GANANCIA_RECURSOS;
+
+        mensaje = `El Entorno acumuló ${CONFIG.GANANCIA_RECURSOS} unidades de caos.`;
+        registrarEvento("Caos acumulado", mensaje, "+");
+
+    } else if (tipo === "atacar") {
+        if (estado.caos < CONFIG.COSTO_ATAQUE) {
+            mensaje =
+                `No hay suficiente caos. El ataque requiere ${CONFIG.COSTO_ATAQUE} unidades y tienes ${estado.caos}. No se consumieron recursos.`;
+            icono = "!";
+
+            registrarEvento("Recursos insuficientes", mensaje, "!");
+        } else {
+            const antes = estado.entropia;
+
+            estado.caos -= CONFIG.COSTO_ATAQUE;
+            estado.entropia = limitar(
+                estado.entropia + CONFIG.REDUCCION_NEGUENTROPIA,
+                0, CONFIG.ENTROPIA_MAXIMA
+            );
+
+            mensaje =
+                `Ataque entrópico ejecutado: la entropía pasó de ${antes} % a ${estado.entropia} %.`;
+            registrarEvento("Ataque entrópico", mensaje, "ϟ");
+        }
+    } else {
+        return;
+    }
+
+    mostrarMensaje("Turno del Entorno", mensaje, icono);
+
+    if (estado.entropia >= CONFIG.ENTROPIA_MAXIMA) {
+        finalizarPartida(
+            "ENTORNO",
+            "El ataque entrópico llevó la entropía al 100 %, provocando el colapso del Sistema."
+        );
+        return;
+    }
+
+    finalizarRonda();
+}
+
+/* =====================================================
+   7. CIERRE AUTOMÁTICO DE RONDA
+   Sin informes educativos ni ventanas por ronda.
+   ===================================================== */
+
+function finalizarRonda() {
+    if (estado.fase !== "JUGANDO") return;
+
+    if (estado.entropia >= CONFIG.ENTROPIA_MAXIMA) {
+        finalizarPartida(
+            "ENTORNO",
+            "La entropía alcanzó el 100 %. El sistema colapsó."
+        );
+        return;
+    }
+
+    if (estado.ronda >= CONFIG.MAX_RONDAS) {
+        finalizarPartida(
+            "SISTEMA",
+            "El Sistema completó las diez rondas sin alcanzar el límite de colapso."
+        );
+        return;
+    }
+
+    estado.ronda += 1;
+    estado.turno = "SISTEMA";
+
+    actualizarInterfaz();
+
+    mostrarMensaje(
+        `Comienza la ronda ${estado.ronda}`,
+        "El turno vuelve al Sistema. Selecciona una acción para continuar.",
+        "↻"
+    );
+}
+
+/* =====================================================
+   8. ÚNICA RETROALIMENTACIÓN EDUCATIVA: FINAL DE PARTIDA
+   ===================================================== */
+
+function finalizarPartida(ganador, motivo) {
+    if (estado.fase === "FINALIZADO") return;
+
+    estado.fase = "FINALIZADO";
+    estado.ganador = ganador;
+
+    const victoriaSistema = ganador === "SISTEMA";
+
+    $("final-icon").textContent = victoriaSistema ? "🏆" : "⚠️";
+
+    $("final-title").textContent = victoriaSistema
+        ? "¡Victoria del Sistema!"
+        : "¡Victoria del Entorno!";
+
+    $("final-intro").textContent = victoriaSistema
+        ? "El Sistema sobrevivió las diez rondas y mantuvo su entropía por debajo del límite de colapso."
+        : "El Entorno logró llevar la entropía al 100 %, provocando el colapso del Sistema.";
+
+    $("final-entropy").textContent = `${estado.entropia} %`;
+    $("final-bits").textContent = estado.bits;
+    $("final-chaos").textContent = estado.caos;
+
+    $("final-cause").textContent = motivo;
+
+    $("final-analysis").textContent = victoriaSistema
+        ? `El Sistema logró sobrevivir con ${estado.entropia} % de entropía y ${estado.bits} Bits restantes. El resultado pone de manifiesto la importancia de administrar recursos, aprovechar oportunidades de neguentropía y mantener el desorden por debajo del límite crítico.`
+        : `El Sistema terminó con ${estado.entropia} % de entropía. Los ataques del Entorno, junto con el desgaste natural, superaron su capacidad de mantener la estabilidad. La partida ilustra la importancia de anticipar perturbaciones y reservar recursos para responder a ellas.`;
+
+    $("final-learning").textContent =
+        "Según la Teoría General de Sistemas, un sistema abierto intercambia información y recursos con su entorno y debe responder a las perturbaciones que recibe. La entropía representa la tendencia al desorden; la neguentropía representa procesos que contribuyen a contrarrestarlo. La información, la regulación y la adaptación pueden favorecer la estabilidad. Esta partida es una simplificación didáctica de esos conceptos, no una predicción de sistemas reales.";
+
+    mostrarMensaje(
+        "Partida finalizada",
+        victoriaSistema
+            ? "El Sistema ha ganado. Consulta la retroalimentación final para conocer el aprendizaje de la partida."
+            : "El Entorno ha ganado. Consulta la retroalimentación final para conocer el aprendizaje de la partida.",
+        victoriaSistema ? "🏆" : "⚠"
+    );
+
+    actualizarInterfaz();
+
+    /* La ventana educativa solo se abre aquí. */
+    $("final-modal").classList.add("visible");
+    $("play-again-btn").focus();
+}
+
+/* =====================================================
+   9. REINICIO COMPLETO
+   ===================================================== */
+
+function reiniciarPartida() {
+    estado.entropia = CONFIG.ENTROPIA_INICIAL;
+    estado.bits = CONFIG.BITS_INICIALES;
+    estado.caos = CONFIG.CAOS_INICIALES;
+    estado.ronda = 1;
+    estado.turno = "SISTEMA";
+    estado.fase = "JUGANDO";
+    estado.eventos = [];
+    estado.historial = [];
+    estado.ganador = null;
+
+    $("final-modal").classList.remove("visible");
+
+    mostrarMensaje(
+        "Nueva partida",
+        "El Sistema comienza con 2 Bits y una entropía del 30 %. Selecciona tu primera acción.",
+        "◉"
+    );
+
+    actualizarInterfaz();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =====================================================
+   10. EVENTOS DE INTERFAZ
+   ===================================================== */
+
+$("collect-btn").addEventListener("click", () => {
+    accionSistema("recolectar");
+});
+
+$("repair-btn").addEventListener("click", () => {
+    accionSistema("reparar");
+});
+
+$("accumulate-btn").addEventListener("click", () => {
+    accionEntorno("acumular");
+});
+
+$("attack-btn").addEventListener("click", () => {
+    accionEntorno("atacar");
+});
+
+$("reset-btn").addEventListener("click", reiniciarPartida);
+$("play-again-btn").addEventListener("click", reiniciarPartida);
+
+$("close-modal-btn").addEventListener("click", () => {
+    $("final-modal").classList.remove("visible");
+});
+
+$("final-modal").addEventListener("click", event => {
+    if (event.target === $("final-modal")) {
+        $("final-modal").classList.remove("visible");
+    }
+});
+
+document.addEventListener("keydown", event => {
+    if (
+        event.key === "Escape" &&
+        estado.fase === "FINALIZADO"
+    ) {
+        $("final-modal").classList.remove("visible");
+    }
+});
+
+/* =====================================================
+   11. INICIALIZACIÓN
+   ===================================================== */
+
+actualizarInterfaz();
+</script>
+</body>
+</html>
